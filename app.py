@@ -232,11 +232,11 @@ def main():
                 button_prompt = "What products are good for athletes?"
         
         with col2:
-            if st.button("🍝 Pasta Recipe", use_container_width=True):
+            if st.button("Pasta Recipe", use_container_width=True):
                 button_prompt = "Suggest ingredients for a pasta recipe"
         
         with col3:
-            if st.button("🥗 Healthy Snacks", use_container_width=True):
+            if st.button("Healthy Snacks", use_container_width=True):
                 button_prompt = "Show me healthy snacks"
         
         # Process button click
