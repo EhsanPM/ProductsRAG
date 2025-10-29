@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "products-rag"
+version = "0.1.0"
+description = "RAG application for grocery product search using LangGraph and Streamlit"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.10"
+streamlit = "^1.29.0"
+langgraph = "^0.2.0"
+langchain = "^0.3.0"
+langchain-openai = "^0.2.0"
+langchain-chroma = "^0.1.0"
+langchain-community = "^0.3.0"
+python-dotenv = "^1.0.0"
+chromadb = "^0.4.0"
+pydantic = "^2.5.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+black = "^23.12.0"
+isort = "^5.13.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
