@@ -54,10 +54,74 @@ def initialize_session_state():
         st.session_state.thread_id = str(uuid.uuid4())
     
     if "rag_system" not in st.session_state:
-        with st.spinner("Initializing RAG system..."):
-            # Suppress stderr during initialization to hide ChromaDB warnings
-            with redirect_stderr(io.StringIO()):
-                st.session_state.rag_system = ProductRAG()
+        # Check if this is first run (vector DB doesn't exist)
+        import os
+        is_first_run = not os.path.exists("chroma_db_openai")
+        
+        if is_first_run:
+            # Show detailed first-run message
+            init_placeholder = st.empty()
+            with init_placeholder.container():
+                st.info("🚀 **First-Time Setup in Progress**")
+                st.markdown("""
+                This is the first time running the app. We're setting up:
+                
+                1. 📚 Loading 4,574 grocery products from database
+                2. 🧠 Creating AI embeddings using OpenAI
+                3. 💾 Building vector search index with ChromaDB
+                
+                **This takes 2-3 minutes and only happens once.**
+                
+                Future app starts will be instant! ⚡
+                """)
+                
+                progress_bar = st.progress(0)
+                status_text = st.empty()
+                
+                # Simulate progress updates (actual creation happens in ProductRAG)
+                import time
+                for i in range(3):
+                    if i == 0:
+                        status_text.text("📚 Loading product data...")
+                        progress_bar.progress(10)
+                    elif i == 1:
+                        status_text.text("🧠 Creating embeddings (this is the slow part)...")
+                        progress_bar.progress(30)
+                    elif i == 2:
+                        status_text.text("💾 Building search index...")
+                        progress_bar.progress(50)
+                    time.sleep(0.5)
+                
+                progress_bar.progress(60)
+                status_text.text("🔧 Finalizing setup...")
+            
+            with st.spinner("Creating vector database (please wait 2-3 minutes)..."):
+                try:
+                    # Suppress stderr during initialization to hide ChromaDB warnings
+                    with redirect_stderr(io.StringIO()):
+                        st.session_state.rag_system = ProductRAG()
+                    
+                    # Clear initialization message and show success
+                    init_placeholder.empty()
+                    st.success("✅ **Setup Complete!** The app is now ready to use. Future visits will be instant!")
+                    time.sleep(2)  # Show success message briefly
+                    st.rerun()  # Refresh to clear success message
+                    
+                except Exception as e:
+                    init_placeholder.empty()
+                    st.error(f"❌ **Setup Failed:** {str(e)}")
+                    st.info("Please check your OpenAI API key in the secrets settings.")
+                    st.stop()
+        else:
+            # Quick load on subsequent runs
+            with st.spinner("🔄 Loading RAG system..."):
+                try:
+                    # Suppress stderr during initialization to hide ChromaDB warnings
+                    with redirect_stderr(io.StringIO()):
+                        st.session_state.rag_system = ProductRAG()
+                except Exception as e:
+                    st.error(f"❌ Failed to load system: {str(e)}")
+                    st.stop()
 
 
 def display_chat_message(role: str, content: str):
