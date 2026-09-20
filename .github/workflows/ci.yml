@@ -1,0 +1,30 @@
+name: CI pipeline
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  lint-format:
+    name: Lint and Format Check
+    uses: ./.github/workflows/backend-lint-format-check.yml
+
+  pipeline-success:
+    name: Pipeline success
+    needs: lint-format
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Pipeline succeeded
+        if: needs.lint-format.result == 'success'
+        run: echo "All checks passed successfully!"
+      - name: Pipeline failed
+        if: needs.lint-format.result != 'success'
+        run: |
+          echo "Some checks failed, were cancelled, or skipped."
+          exit 1
+
+          
