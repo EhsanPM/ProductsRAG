@@ -8,21 +8,26 @@ on:
   workflow_dispatch:
 
 jobs:
+  vulnerability-check:
+    name: Dependency Vulnerability Check
+    uses: ./.github/workflows/vulnerability-check.yml
+
   lint-format:
     name: Lint and Format Check
+    needs: vulnerability-check
     uses: ./.github/workflows/backend-lint-format-check.yml
 
   pipeline-success:
     name: Pipeline success
-    needs: lint-format
+    needs: [vulnerability-check, lint-format]
     runs-on: ubuntu-latest
     if: always()
     steps:
       - name: Pipeline succeeded
-        if: needs.lint-format.result == 'success'
+        if: needs.vulnerability-check.result == 'success' && needs.lint-format.result == 'success'
         run: echo "All checks passed successfully!"
       - name: Pipeline failed
-        if: needs.lint-format.result != 'success'
+        if: needs.vulnerability-check.result != 'success' || needs.lint-format.result != 'success'
         run: |
           echo "Some checks failed, were cancelled, or skipped."
           exit 1
