@@ -23,7 +23,6 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_chroma import Chroma
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 from langchain_core.tools import tool
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
